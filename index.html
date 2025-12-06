@@ -1398,7 +1398,7 @@
     }
     
     
-    // ------- Polling: Obtener Última Alerta de Vercel (MODIFICADA) -------
+/ ------- Polling: Obtener Última Alerta de Vercel (MODIFICADA) -------
     async function obtenerUltimaAlerta() {
         try {
             const response = await fetch(API_URL_ALERTAS);
@@ -1419,27 +1419,24 @@
             ultimaAlertaRecibida = alertaVercel;
             const { caja, tipo, valor } = alertaVercel;
 
-            // ⬅️ NUEVA LÓGICA: Procesar la alerta de UBICACION
-            // ...
-            // ⬅️ LÓGICA: Procesar la alerta de UBICACION
+            // ⬅️ LÓGICA CORREGIDA PARA UBICACION
             if (tipo === 'UBICACION' && valor.includes(',')) {
                 const [latStr, lonStr] = valor.split(',');
                 const lat = latStr.trim();
                 const lon = lonStr.trim();
-
-                // Verificar si son coordenadas válidas antes de intentar actualizar
+                
+                // Validación robusta: asegúrate de que sean números
                 if (lat && lon && !isNaN(parseFloat(lat)) && !isNaN(parseFloat(lon))) {
                     actualizarUbicacionPallet(lat, lon, caja);
                     console.log(`Ubicación GPS actualizada para Caja ${caja}: ${lat}, ${lon}`);
                 } else {
-                    // Este mensaje aparecerá en tu consola si las coordenadas son inválidas.
+                    // ¡Importante para depuración! Revisa la Consola si ves este mensaje
                     console.warn(`Alerta de UBICACION recibida pero coordenadas inválidas o faltantes. Recibido: "${valor}"`);
                 }
             }
-// ...
-            
+
             // Llamar a tu función local para procesar y mostrar la alerta en la tabla
-            // SÓLO si NO es una alerta de UBICACION
+            // SÓLO si NO es una alerta de UBICACION (mantiene la tabla limpia)
             if (tipo !== 'UBICACION') {
                 agregarAlerta(caja, tipo, valor);
             }
@@ -1452,7 +1449,7 @@
     }
 
 
-    // ------- Mapa de Nuevo Laredo (INICIALIZACIÓN) -------
+   // ------- Mapa de Nuevo Laredo (INICIALIZACIÓN) -------
     let map;
     document.addEventListener('DOMContentLoaded', function () {
       const mapDiv = document.getElementById('palletMap');
@@ -1465,8 +1462,7 @@
           attribution: '&copy; OpenStreetMap contributors'
         }).addTo(map);
 
-        // Se remueve el L.marker inicial para evitar conflicto, pero se deja el centrado en Nuevo Laredo.
-      
+        // El marcador estático de la ciudad ha sido eliminado para permitir la visualización del pallet.
       }
 
       // pintar historial y alertas vacíos
