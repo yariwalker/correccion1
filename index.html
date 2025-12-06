@@ -1420,13 +1420,23 @@
             const { caja, tipo, valor } = alertaVercel;
 
             // ⬅️ NUEVA LÓGICA: Procesar la alerta de UBICACION
+            // ...
+            // ⬅️ LÓGICA: Procesar la alerta de UBICACION
             if (tipo === 'UBICACION' && valor.includes(',')) {
-                const [lat, lon] = valor.split(',');
-                if (lat.trim() && lon.trim() && !isNaN(parseFloat(lat)) && !isNaN(parseFloat(lon))) {
+                const [latStr, lonStr] = valor.split(',');
+                const lat = latStr.trim();
+                const lon = lonStr.trim();
+
+                // Verificar si son coordenadas válidas antes de intentar actualizar
+                if (lat && lon && !isNaN(parseFloat(lat)) && !isNaN(parseFloat(lon))) {
                     actualizarUbicacionPallet(lat, lon, caja);
                     console.log(`Ubicación GPS actualizada para Caja ${caja}: ${lat}, ${lon}`);
+                } else {
+                    // Este mensaje aparecerá en tu consola si las coordenadas son inválidas.
+                    console.warn(`Alerta de UBICACION recibida pero coordenadas inválidas o faltantes. Recibido: "${valor}"`);
                 }
             }
+// ...
             
             // Llamar a tu función local para procesar y mostrar la alerta en la tabla
             // SÓLO si NO es una alerta de UBICACION
@@ -1456,11 +1466,7 @@
         }).addTo(map);
 
         // Se remueve el L.marker inicial para evitar conflicto, pero se deja el centrado en Nuevo Laredo.
-        // Si deseas mantener el marcador de la ciudad, puedes cambiar la variable 'palletMarker' a 'cityMarker'.
-        L.marker([27.4763, -99.5164])
-          .addTo(map)
-          .bindPopup('Nuevo Laredo, Tamaulipas')
-          .openPopup();
+      
       }
 
       // pintar historial y alertas vacíos
